@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import ai_image_head from '../../assets/creative.png'
 import Choose_designHub from '../../assets/Choose_designHub.png'
-import frontPageImage from "../../assets/front_page_image.png";
+import frontPageImage from '../../assets/front_page_image.png'
 
 function front_page() {
   return (
