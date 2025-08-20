@@ -60,10 +60,10 @@ const router = createBrowserRouter([
       path: "/feedback",
       element: <FeedbackForm />,
     },
-    {
-      path: "/dashboard",
-      element: <Dashboard />,
-    },
+      {
+          path="/dashboard"
+          element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
+            },
     {
       path: "/history",
       element: <HistorySection />,
