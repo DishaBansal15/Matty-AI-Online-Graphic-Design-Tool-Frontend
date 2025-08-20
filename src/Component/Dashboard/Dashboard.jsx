@@ -19,11 +19,7 @@ export default function Dashboard() {
       try {
         const token = localStorage.getItem("token"); // ✅ fixed key
 
-        if (!token) {
-          toast.error("Please log in again");
-          navigate("/login");
-          return;
-        }
+        
 
         const { data } = await axios.get(
           "https://matty-ai-online-graphic-design-tool.onrender.com/api/projects/user",
