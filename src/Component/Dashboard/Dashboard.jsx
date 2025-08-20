@@ -16,17 +16,32 @@ export default function App() {
     if (user?.name) setUsername(user.name);
 
     const fetchProjects = async () => {
-      try {
-        const { data } = await axios.get("https://matty-ai-online-graphic-design-tool.onrender.com/api/projects/user", {
-          withCredentials: true,
-        });
-        setProjects(data.projects || []);
-      } catch (error) {
-        toast.error(error.response?.data?.message || "Failed to fetch projects");
-      } finally {
-        setLoading(false);
+  try {
+    const token = localStorage.getItem("jwt"); 
+
+    if (!token) {
+      toast.error("Please log in again");
+      navigate("/login");
+      return;
+    }
+
+    const { data } = await axios.get(
+      "https://matty-ai-online-graphic-design-tool.onrender.com/api/projects/user",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, 
+        },
       }
-    };
+    );
+
+    setProjects(data.projects || []);
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Failed to fetch projects");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     fetchProjects();
   }, []);
