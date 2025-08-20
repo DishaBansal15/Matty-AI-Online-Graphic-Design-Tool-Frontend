@@ -60,13 +60,13 @@ const router = createBrowserRouter([
       path: "/feedback",
       element: <FeedbackForm />,
     },
-      {
-          path="/dashboard"
-          element: <Dashboard/>,
-            },
     {
       path: "/history",
       element: <HistorySection />,
+    },
+       {
+      path: "/dashboard",
+      element: <Dashboard />,
     },
     {
       path: "/editor/:projectId",
