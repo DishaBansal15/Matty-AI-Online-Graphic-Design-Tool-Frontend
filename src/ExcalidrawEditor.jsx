@@ -50,11 +50,6 @@ const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
   }, []);
 
   useEffect(() => {
-    if (!token) {
-      toast.error("No token found. Please log in again.");
-      navigate("/login");
-      return;
-    }
 
     if (!projectId) {
       setIsLoading(false);
