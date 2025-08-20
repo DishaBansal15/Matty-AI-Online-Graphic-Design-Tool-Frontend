@@ -62,7 +62,7 @@ const router = createBrowserRouter([
     },
       {
           path="/dashboard"
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
+          element: <Dashboard/>,
             },
     {
       path: "/history",
