@@ -17,8 +17,8 @@ const initialScene = {
     currentItemOpacity: 100,
     zoom: { value: 1 },
     scrollX: 0,
-    scrollY: 0
-  }
+    scrollY: 0,
+  },
 };
 
 const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
@@ -32,14 +32,17 @@ const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
   const [isExistingProject, setIsExistingProject] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const toggleTheme = () => setTheme(prev => (prev === "light" ? "dark" : "light"));
+  const token = localStorage.getItem("token"); // ✅ store JWT at login
 
-  // Memoized scene update handler
+  const toggleTheme = () =>
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+
   const handleSceneChange = useCallback((elements, appState) => {
-    setSceneData(prev => {
-      // Only update if there are actual changes
-      if (JSON.stringify(prev.elements) !== JSON.stringify(elements) ||
-          JSON.stringify(prev.appState) !== JSON.stringify(appState)) {
+    setSceneData((prev) => {
+      if (
+        JSON.stringify(prev.elements) !== JSON.stringify(elements) ||
+        JSON.stringify(prev.appState) !== JSON.stringify(appState)
+      ) {
         return { elements, appState };
       }
       return prev;
@@ -54,13 +57,16 @@ const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
 
     const fetchProject = async () => {
       try {
-        const { data } = await axios.get(`https://matty-ai-online-graphic-design-tool.onrender.com/api/projects/${projectId}`, {
-          withCredentials: true,
-        });
+        const { data } = await axios.get(
+          `https://matty-ai-online-graphic-design-tool.onrender.com/api/projects/${projectId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         if (data.project) {
           setSceneData({
             elements: data.project.elements || initialScene.elements,
-            appState: data.project.appState || initialScene.appState
+            appState: data.project.appState || initialScene.appState,
           });
           setProjectName(data.project.name || "");
           setIsExistingProject(true);
@@ -74,7 +80,7 @@ const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
     };
 
     fetchProject();
-  }, [projectId, navigate]);
+  }, [projectId, navigate, token]);
 
   const saveProject = async () => {
     if (!projectName.trim()) {
@@ -85,30 +91,25 @@ const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
     try {
       const elements = excalidrawAPI?.getSceneElements() || sceneData.elements;
       const appState = excalidrawAPI?.getAppState() || sceneData.appState;
-      
+
       let thumbnail = "";
       const canvas = document.querySelector("canvas");
       if (canvas) thumbnail = canvas.toDataURL("image/png");
 
-      const projectData = {
-        name: projectName,
-        elements,
-        appState,
-        thumbnail
-      };
+      const projectData = { name: projectName, elements, appState, thumbnail };
 
       if (isExistingProject && projectId) {
         await axios.put(
           `https://matty-ai-online-graphic-design-tool.onrender.com/api/projects/${projectId}`,
           projectData,
-          { withCredentials: true }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         toast.success("Project updated successfully!");
       } else {
         const { data } = await axios.post(
           "https://matty-ai-online-graphic-design-tool.onrender.com/api/projects/create",
           projectData,
-          { withCredentials: true }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setIsExistingProject(true);
         navigate(`/editor/${data.project._id}`);
@@ -122,7 +123,9 @@ const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
   };
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">Loading...</div>
+    );
   }
 
   return (
@@ -139,7 +142,7 @@ const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
           border: "none",
           padding: "8px 12px",
           borderRadius: "6px",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         Save Project
@@ -157,7 +160,7 @@ const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
           border: "none",
           padding: "8px 12px",
           borderRadius: "6px",
-          cursor: "pointer"
+          cursor: "pointer",
         }}
       >
         Toggle Theme
