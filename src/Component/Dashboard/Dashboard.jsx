@@ -5,7 +5,7 @@ import DOMPurify from "dompurify";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export default function App() {
+export default function Dashboard() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("User");
   const [projects, setProjects] = useState([]);
@@ -16,35 +16,34 @@ export default function App() {
     if (user?.name) setUsername(user.name);
 
     const fetchProjects = async () => {
-  try {
-    const token = localStorage.getItem("jwt"); 
+      try {
+        const token = localStorage.getItem("token"); // ✅ fixed key
 
-    if (!token) {
-      toast.error("Please log in again");
-      navigate("/login");
-      return;
-    }
+        if (!token) {
+          toast.error("Please log in again");
+          navigate("/login");
+          return;
+        }
 
-    const { data } = await axios.get(
-      "https://matty-ai-online-graphic-design-tool.onrender.com/api/projects/user",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, 
-        },
+        const { data } = await axios.get(
+          "https://matty-ai-online-graphic-design-tool.onrender.com/api/projects/user",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ consistent with login
+            },
+          }
+        );
+
+        setProjects(data.projects || []);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to fetch projects");
+      } finally {
+        setLoading(false);
       }
-    );
-
-    setProjects(data.projects || []);
-  } catch (error) {
-    toast.error(error.response?.data?.message || "Failed to fetch projects");
-  } finally {
-    setLoading(false);
-  }
-};
-
+    };
 
     fetchProjects();
-  }, []);
+  }, [navigate]);
 
   const safeUsername = DOMPurify.sanitize(username);
 
