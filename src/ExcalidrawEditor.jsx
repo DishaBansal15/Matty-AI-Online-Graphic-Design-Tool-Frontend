@@ -48,13 +48,14 @@ const ExcalidrawEditor = ({ defaultTheme = "light" }) => {
       return prev;
     });
   }, []);
-useEffect(() => {
+
+  useEffect(() => {
     if (!token) {
       toast.error("No token found. Please log in again.");
       navigate("/login");
       return;
     }
-  useEffect(() => {
+
     if (!projectId) {
       setIsLoading(false);
       return;
@@ -132,6 +133,7 @@ useEffect(() => {
       toast.error("Error saving project");
     }
   };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">Loading...</div>
